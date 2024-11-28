@@ -1,8 +1,9 @@
-# dockerdeployment
+<h1 align="center" id="title">Deploying a Spring Boot Application to AWS EKS using Terraform Amazon ECR and GitHub Actions CI/CD</h1>
+
+<p id="description">This repository demonstrates how to deploy a Spring Boot application to Amazon EKS (Elastic Kubernetes Service) using Terraform for infrastructure management Amazon ECR (Elastic Container Registry) for container image storage and GitHub Actions for CI/CD (Continuous Integration/Continuous Deployment) automation.</p>
 
 
-
-# <a name="_toc172059415"></a>Infrastructure Deployment Guide
+# <a name="_toc172059415"></a>Infrastructure Deployment
 
 # <a name="_toc172059414"></a>Prerequisite
 
@@ -25,3 +26,12 @@
 - **Terraform Validate:** Utilizes the terraform validate command to ensure the correctness of Terraform configurations.
 - **Terraform Plan:** Executes terraform init and terraform plan to initialize the environment and generate an execution plan for infrastructure changes.
 - **Terraform Apply:** (Approval check is in place to give a go head for deployment): Consist of terraform init and terraform apply commands, with an approval check in place to authorize the deployment of infrastructure changes.
+
+
+<h2>Repository Structure:</h2>
+<ul>
+  <li><code>src/</code>: Spring Boot application source code</li>
+  <li><code>Dockerfile</code>: Docker configuration file for building the container image</li>
+  <li><code>main.tf</code>: Terraform configuration file for provisioning AWS resources</li>
+  <li><code>.github/workflows/ci-cd.yml</code>: GitHub Actions workflow configuration for CI/CD</li>
+</ul>
