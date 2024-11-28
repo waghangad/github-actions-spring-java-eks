@@ -113,6 +113,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: helm-chart
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
       - name: Deploy to EKS
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
