@@ -6,7 +6,9 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
+env:
+  ECR_REPOSITORY: rk-poc-ecr
+  EKS_CLUSTER_NAME: rk-poc
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -88,3 +90,13 @@ jobs:
           helm uninstall java || true  # Uninstall the previous release (ignore if it doesn't exist)
 
           helm install java ./java-chart
+
+
+      - name: Deploy to EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+          IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        run: |
+          sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" deployment.yml && \
+          kubectl apply -f deployment.yml
+          #kubectl apply -f manifests/hello-app-service.yaml
