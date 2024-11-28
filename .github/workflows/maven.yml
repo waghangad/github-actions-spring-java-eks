@@ -1,8 +1,7 @@
 name: Java CI with Maven, Docker, and EKS Deployment
 
 on:
-  push:
-    branches: ["main"]
+
   pull_request:
     branches: ["main"]
 
