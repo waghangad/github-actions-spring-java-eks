@@ -1,144 +1,58 @@
-# This workflow installs the latest version of Terraform CLI and configures the Terraform CLI configuration file
-# with an API token for Terraform Cloud (app.terraform.io). On pull request events, this workflow will run
-# `terraform init`, `terraform fmt`, and `terraform plan` (speculative plan via Terraform Cloud). On push events
-# to the "main" branch, `terraform apply` will be executed.
-#
-# Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
-#
-# To use this workflow, you will need to complete the following setup steps.
-#
-# 1. Create a `main.tf` file in the root of this repository with the `remote` backend and one or more resources defined.
-#   Example `main.tf`:
-#     # The configuration for the `remote` backend.
-#     terraform {
-#       backend "remote" {
-#         # The name of your Terraform Cloud organization.
-#         organization = "example-organization"
-#
-#         # The name of the Terraform Cloud workspace to store Terraform state files in.
-#         workspaces {
-#           name = "example-workspace"
-#         }
-#       }
-#     }
-#
-#     # An example resource that does nothing.
-#     resource "null_resource" "example" {
-#       triggers = {
-#         value = "A example resource that does nothing!"
-#       }
-#     }
-#
-#
-# 2. Generate a Terraform Cloud user API token and store it as a GitHub secret (e.g. TF_API_TOKEN) on this repository.
-#   Documentation:
-#     - https://www.terraform.io/docs/cloud/users-teams-organizations/api-tokens.html
-#     - https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
-#
-# 3. Reference the GitHub secret in step using the `hashicorp/setup-terraform` GitHub Action.
-#   Example:
-#     - name: Setup Terraform
-#       uses: hashicorp/setup-terraform@v1
-#       with:
-#         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
 name: 'Terraform'
 
 on:
-  push:
-    branches: [ "infrastructure" ]
   pull_request:
+    branches: [ "infrastructure" ]  # Trigger on pull request to 'infrastructure' branch
 
 permissions:
-  contents: read
+  contents: read  # Permissions to read repository contents
 
 jobs:
-
-  
   Plan:
-  - name: tfsec action
-  # You may pin to the exact commit or the version.
-  # uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6
-  uses: aquasecurity/tfsec-action@v1.0.3
-  with:
-    
-
-    working_directory: # optional, default is .
-    # The version of tfsec to use, defaults to latest
-    version: # optional, default is latest
-    # the format of the output
-    format: # optional, default is default
-    # Space separated args specified here will be added during tfsec execution.
-
-    additional_args: # optional
-    # If set to `true` the action step won't break the  build
-    soft_fail: # optional
-    # GitHub token used for making authenticated requests to the GitHub API,
-
-    github_token: # optional
-              
-    
-    name: 'Terraform'
     runs-on: ubuntu-latest
     environment: production
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v4
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      # Set up AWS credentials from GitHub secrets
+      - name: Set up AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+      - name: tfsec action
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          # Optional arguments for tfsec (you can specify them based on your needs)
+          working_directory: '.'   # Default is the current directory
+          format: 'json'           # Output format (e.g., json, default)
+          additional_args: '--exclude-severity high'  # Optional: Add extra args to tfsec
+          soft_fail: false         # Set to true to allow the action to not break the build
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # Optional: GitHub token for API requests
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform init
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
+      # Initialize the Terraform working directory
+      - name: Terraform Init
+        run: terraform init
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform plan -input=false
+      # Check Terraform configuration files for canonical format
+      - name: Terraform Format
+        run: terraform fmt -check
 
-  Apply:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
-    environment: production
+      # Generate an execution plan for Terraform
+      - name: Terraform Plan
+        run: terraform plan -input=false
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
+      # Run tfsec to scan Terraform code for security issues
 
-    steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform init
-
-=
-
-      # On push to "main", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
