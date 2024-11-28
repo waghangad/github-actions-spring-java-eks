@@ -84,4 +84,6 @@ jobs:
   
       - name: Deploy java helm chart to EKS
         run: |
+          helm uninstall java || true  # Uninstall the previous release (ignore if it doesn't exist)
+
           helm install java ./java-chart
