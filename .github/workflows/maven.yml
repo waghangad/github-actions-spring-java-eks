@@ -34,10 +34,7 @@ jobs:
           name: java-build-artifact
           path: target/*.jar
 
-  push-image:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+
       - name: Docker Login with Retry
         uses: docker/login-action@v3
         with:
