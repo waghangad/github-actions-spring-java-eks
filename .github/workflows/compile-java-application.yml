@@ -4,8 +4,6 @@ on:
     - push
 jobs:
     compile-application:
-        permissions: 
-          actions: write
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
@@ -21,7 +19,7 @@ jobs:
               run:  mvn -B package --file pom.xml
 
             - name: Upload Artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: java-build-artifact
                 path: target/*.jar
