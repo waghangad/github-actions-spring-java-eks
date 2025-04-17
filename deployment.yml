@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: my-spring-boot-app
-        image: 992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:latest
+        image: 140823751697.dkr.ecr.us-east-1.amazonaws.com/rk-poc-ecr:latest
         ports:
         - containerPort: 8080
           name: http
