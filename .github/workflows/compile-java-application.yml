@@ -92,4 +92,4 @@ jobs:
 
             - name: Run k8s command
               run: |
-                kubectl get pods
+                kubectl get pods -n kube-system
