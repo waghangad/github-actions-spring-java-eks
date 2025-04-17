@@ -6,43 +6,44 @@ permissions:
       id-token: write
       contents: read
 jobs:
-    # compile-application:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout Code
-    #           uses: actions/checkout@v4
-    #         - name: Setup Java
-    #           uses: actions/setup-java@v4
-    #           with:
-    #             distribution: 'temurin'
-    #             java-version: '17'
-    #             cache: maven
-    #         - name: Build Application
-    #           run:  mvn -B package --file pom.xml
-    #         - name: Upload Artifact
-    #           uses: actions/upload-artifact@v4
-    #           with:
-    #             name: java-build-artifact
-    #             path: target/*.jar
-    #         - name: Docker Login
-    #           uses: docker/login-action@v3
-    #           with:
-    #             username: ${{ vars.DOCKERHUB_USERNAME }}
-    #             password: ${{ secrets.DOCKERHUB_TOKEN }}
-    #         - name: Enable QEMU
-    #           uses: docker/setup-qemu-action@v3
+    compile-application:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                distribution: 'temurin'
+                java-version: '17'
+                cache: maven
+            - name: Build Application
+              run:  mvn -B package --file pom.xml
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: java-build-artifact
+                path: target/*.jar
+
+            # - name: Docker Login
+            #   uses: docker/login-action@v3
+            #   with:
+            #     username: ${{ vars.DOCKERHUB_USERNAME }}
+            #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+            # - name: Enable QEMU
+            #   uses: docker/setup-qemu-action@v3
         
-    #         - name: Set up Docker Buildx
-    #           uses: docker/setup-buildx-action@v3
+            # - name: Set up Docker Buildx
+            #   uses: docker/setup-buildx-action@v3
         
-    #         - name: Build and Push Docker Images with Retry
-    #           uses: docker/build-push-action@v6
-    #           with:
-    #             context: .
-    #             file: Dockerfile
-    #             tags: waghangad/spring-java-eks:latest
-    #             push: true
-    #             platforms: linux/amd64,linux/arm64
+            # - name: Build and Push Docker Images with Retry
+            #   uses: docker/build-push-action@v6
+            #   with:
+            #     context: .
+            #     file: Dockerfile
+            #     tags: waghangad/spring-java-eks:latest
+            #     push: true
+            #     platforms: linux/amd64,linux/arm64
 
 
     setup-aws-credential:
