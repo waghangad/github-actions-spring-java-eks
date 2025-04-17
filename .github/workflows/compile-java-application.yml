@@ -47,6 +47,7 @@ jobs:
 
 
     setup-aws-credential:
+        needs: compile-application
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
