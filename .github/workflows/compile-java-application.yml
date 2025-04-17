@@ -1,0 +1,10 @@
+name: Compile Java Application
+on: 
+    workflow_dispatch 
+jobs:
+    compile-application:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout code
+              uses: actions/checkout@v4
+
