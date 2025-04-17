@@ -9,25 +9,25 @@ env:
     EKS_CLUSTER_NAME: 'demo-eks-cluster'
 
 jobs:
-    # compile-application:
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout Code
-    #           uses: actions/checkout@v4
-    #         - name: Setup Java
-    #           uses: actions/setup-java@v4
-    #           with:
-    #             distribution: 'temurin'
-    #             java-version: '17'
-    #             cache: maven
+    compile-application:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                distribution: 'temurin'
+                java-version: '17'
+                cache: maven
             
-    #         - name: Build Application
-    #           run:  mvn -B package --file pom.xml
-    #         - name: Upload Artifact
-    #           uses: actions/upload-artifact@v4
-    #           with:
-    #             name: java-build-artifact
-    #             path: target/*.jar
+            - name: Build Application
+              run:  mvn -B package --file pom.xml
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: java-build-artifact
+                path: target/*.jar
 
             # - name: Docker Login
             #   uses: docker/login-action@v3
@@ -50,7 +50,7 @@ jobs:
             #     platforms: linux/amd64,linux/arm64
 
     setup-aws-credential:
-        # needs: compile-application
+        needs: compile-application
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
@@ -72,20 +72,20 @@ jobs:
               with:
                 mask-password: true
 
-            # - name: Download Artifact
-            #   uses: actions/download-artifact@v4
-            #   with:
-            #     name: java-build-artifact
-            #     path: target/*.jar
+            - name: Download Artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: java-build-artifact
+                path: target/*.jar
 
-            # - name: Build, tag, and push docker image to Amazon ECR
-            #   env:
-            #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-            #     REPOSITORY: study/demo-repo
-            #     IMAGE_TAG: latest
-            #   run: |
-            #     docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-            #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+            - name: Build, tag, and push docker image to Amazon ECR
+              env:
+                REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                REPOSITORY: study/demo-repo
+                IMAGE_TAG: latest
+              run: |
+                docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+                docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
             
             - name: Update kubeconfig for EKS
               run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }}
