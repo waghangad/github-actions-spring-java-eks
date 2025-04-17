@@ -17,6 +17,13 @@ jobs:
                 distribution: 'temurin'
                 java-version: '17'
                 cache: maven
+            
+            - name: Cache NPM dependencies
+              uses: actions/cache@v4
+              with:
+                path: target/*.jar
+                key: 'java-build-artifact'
+            
             - name: Build Application
               run:  mvn -B package --file pom.xml
             - name: Upload Artifact
@@ -69,7 +76,7 @@ jobs:
               with:
                 mask-password: true
 
-            - name: Upload Artifact
+            - name: Download Artifact
               uses: actions/download-artifact@v4
               with:
                 name: java-build-artifact
