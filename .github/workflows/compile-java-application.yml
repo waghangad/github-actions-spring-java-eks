@@ -89,3 +89,7 @@ jobs:
             
             - name: Update kubeconfig for EKS
               run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }}
+
+            - name: Run k8s command
+              run: |
+                kubectl get pods
