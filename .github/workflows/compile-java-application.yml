@@ -7,4 +7,9 @@ jobs:
         steps:
             - name: checkout code
               uses: actions/checkout@v4
+            - name: setup java 17
+              uses: actions/setup-java@v4
+              with:
+                distribution: 'temurin'
+                java-version: '17'
 
