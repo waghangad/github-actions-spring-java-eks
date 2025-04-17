@@ -1,15 +1,27 @@
 name: Compile Java Application
 on: 
-    workflow_dispatch 
+    - workflow_dispatch
+    - push
 jobs:
     compile-application:
         runs-on: ubuntu-latest
         steps:
-            - name: checkout code
+            - name: Checkout Code
               uses: actions/checkout@v4
-            - name: setup java 17
+
+            - name: Setup Java
               uses: actions/setup-java@v4
               with:
                 distribution: 'temurin'
                 java-version: '17'
+
+            - name: Build Application
+              run:  mvn -B package --file pom.xml
+
+            - name: Upload Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                name: java-build-artifact
+                path: target/*.jar
+
 
