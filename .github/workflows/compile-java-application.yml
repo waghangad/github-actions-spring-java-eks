@@ -4,6 +4,8 @@ on:
     - push
 jobs:
     compile-application:
+        permissions: 
+          actions: write
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Code
