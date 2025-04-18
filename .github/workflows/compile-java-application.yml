@@ -81,7 +81,7 @@ jobs:
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
-              
+
             - name: Install kubectl
               uses: azure/setup-kubectl@v4
 
@@ -97,5 +97,5 @@ jobs:
 
             - name: Run k8s command
               run: |
-                kubectl get pods -n kube-system
+                kubectl create -f service.yml || true
                 kubectl replace -f deployment.yml --force
