@@ -101,7 +101,7 @@ jobs:
 
             - name: Run k8s command
               run: |
-                helm install myApp helm-chart/ || true
+                helm install demoapp helm-chart/ || true
                 # kubectl create -f service.yml
                 # kubectl create -f deployment.yml
                 # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG
