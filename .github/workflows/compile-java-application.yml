@@ -78,6 +78,9 @@ jobs:
                 name: java-build-artifact
                 path: target/*.jar
 
+            - name: Build Application
+              run:  mvn clean install
+              
             - name: Build, tag, and push docker image to Amazon ECR
               env:
                 REGISTRY: ${{ steps.login-ecr.outputs.registry }}
