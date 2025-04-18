@@ -1,8 +1,4 @@
-FROM eclipse-temurin:11-jre-alpine
-# or
-FROM openjdk:11-jre-slim
-
-EXPOSE 8080
-
-COPY target/*.jar spring-action.jar
-ENTRYPOINT ["java","-jar","spring-action.jar"]
+FROM openjdk:8-jdk-alpine
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
