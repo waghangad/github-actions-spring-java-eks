@@ -50,8 +50,10 @@ jobs:
                 REPOSITORY: study/demo-repo
                 IMAGE_TAG: latest
               run: |
-                docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+                echo ${{ github.run_id }}
+                docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ${{ github.run_id }} .
                 docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
 
             #   If You want to use DockerHub use below code.
             #   =============================================
