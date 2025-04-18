@@ -79,6 +79,9 @@ jobs:
         needs: Build-Application
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+              
             - name: Install kubectl
               uses: azure/setup-kubectl@v4
 

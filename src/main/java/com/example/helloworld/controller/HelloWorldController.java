@@ -10,4 +10,9 @@ public class HelloWorldController {
     public String sendGreetings() {
         return "Hello, World!";
     }
+
+    @GetMapping("/")
+    public String sendGreetings() {
+        return "Path , /hello";
+    }
 }
