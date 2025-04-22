@@ -101,6 +101,7 @@ jobs:
 
             - name: Run k8s command
               run: |
+                helm uninstall demoapp || true 
                 helm install demoapp helm-chart/ || true
                 # kubectl create -f service.yml
                 # kubectl create -f deployment.yml
