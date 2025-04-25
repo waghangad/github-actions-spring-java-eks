@@ -80,6 +80,7 @@ jobs:
           #     platforms: linux/amd64,linux/arm64
 
     Dev-Deployment:
+      if: contains(github.ref, 'development') 
       needs: Build-Application
       runs-on: ubuntu-latest
       environment:
@@ -110,6 +111,7 @@ jobs:
               # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG        
 
     Prod-Deployment:
+      if: github.ref == 'refs/heads/main'
       needs: Build-Application
       runs-on: ubuntu-latest
       environment:
@@ -140,4 +142,3 @@ jobs:
               # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG
             
 
-              
