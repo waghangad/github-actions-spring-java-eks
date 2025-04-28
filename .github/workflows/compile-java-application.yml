@@ -90,45 +90,12 @@ jobs:
           docker tag $REGISTRY/$REPOSITORY $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-    Dev-Deployment:
-      if: contains(github.ref, 'development') 
-      needs: Build-Application
-      runs-on: ubuntu-latest
-      environment:
-        name: development
-      steps:
-          - name: Checkout Code
-            uses: actions/checkout@v4
-
-          - name: Install kubectl
-            uses: azure/setup-kubectl@v4
-
-          - name: Configure AWS Credentials
-            uses: aws-actions/configure-aws-credentials@v4
-            with:
-              audience: sts.amazonaws.com
-              aws-region: ap-south-1
-              role-to-assume: arn:aws:iam::992293216837:role/github-action-oidc-Role-xta7NbBBHjdI
-        
-          - name: Update kubeconfig for EKS
-            run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }}
-
-          - name: Run k8s command
-            run: |
-              helm uninstall demoapp || true 
-              helm install demoapp helm-chart/ || true
-              # kubectl create -f service.yml
-              # kubectl create -f deployment.yml
-              # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG        
-
-
-              
-    # Prod-Deployment:
-    #   if: github.ref == 'refs/heads/main'
-    #   needs: Build-Application
+    # Dev-Deployment:
+    #   if: contains(github.ref, 'development') 
+    #   needs: Test-Application
     #   runs-on: ubuntu-latest
     #   environment:
-    #     name: production
+    #     name: development
     #   steps:
     #       - name: Checkout Code
     #         uses: actions/checkout@v4
@@ -152,6 +119,39 @@ jobs:
     #           helm install demoapp helm-chart/ || true
     #           # kubectl create -f service.yml
     #           # kubectl create -f deployment.yml
-    #           # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG
+    #           # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG        
+
+
+
+    Prod-Deployment:
+      if: github.ref == 'refs/heads/main'
+      needs: Test-Application
+      runs-on: ubuntu-latest
+      environment:
+        name: production
+      steps:
+          - name: Checkout Code
+            uses: actions/checkout@v4
+
+          - name: Install kubectl
+            uses: azure/setup-kubectl@v4
+
+          - name: Configure AWS Credentials
+            uses: aws-actions/configure-aws-credentials@v4
+            with:
+              audience: sts.amazonaws.com
+              aws-region: ap-south-1
+              role-to-assume: arn:aws:iam::992293216837:role/github-action-oidc-Role-xta7NbBBHjdI
+        
+          - name: Update kubeconfig for EKS
+            run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }}
+
+          - name: Run k8s command
+            run: |
+              helm uninstall demoapp || true 
+              helm install demoapp helm-chart/ || true
+              # kubectl create -f service.yml
+              # kubectl create -f deployment.yml
+              # kubectl set image deployment/my-spring-boot-app my-spring-boot-app=992293216837.dkr.ecr.ap-south-1.amazonaws.com/study/demo-repo:$IMAGE_TAG
             
 
