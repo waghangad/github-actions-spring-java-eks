@@ -65,6 +65,20 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-build-artifact
+      - name: run test cases
+        run: java -jar *.jar
+
+    Build-Push-Image:
+      runs-on: ubuntu-latest
+      needs: Build-Application
+      steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java-build-artifact
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -125,7 +139,7 @@ jobs:
 
     Prod-Deployment:
       if: github.ref == 'refs/heads/main'
-      needs: Test-Application
+      needs: Build-Push-Image
       runs-on: ubuntu-latest
       environment:
         name: production
