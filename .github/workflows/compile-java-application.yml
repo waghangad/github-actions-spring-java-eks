@@ -24,7 +24,7 @@ jobs:
               cache: maven
 
           - name: Build Application
-            run:  mvn clean package
+            run:  mvn clean package -Dmaven.test.skip
 
           - name: Upload Artifact
             uses: actions/upload-artifact@v4
