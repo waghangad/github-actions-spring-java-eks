@@ -89,7 +89,7 @@ jobs:
           name: java-build-artifact
 
       - name: build image
-        run: docker build -t waghangad/spring-java-eks:latest .
+        run: docker build -t waghangad/spring-java-eks:latest arg=java-build-artifact .
 
 
     # Dev-Deployment:
